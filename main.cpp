@@ -53,14 +53,12 @@ std::vector<std::string> parse_whitelist(std::string arg){
 bool pdu_processor(Tins::PDU& pdu){
     const Tins::Dot11Deauthentication& deauth = pdu.rfind_pdu<Tins::Dot11Deauthentication>();
     if(dd_settings.whitelist.size() > 0){
-        if(std::find(dd_settings.whitelist.begin(), dd_settings.whitelist.end(), deauth.addr2().to_string()) != dd_settings.whitelist.end()){
+        if(std::find(dd_settings.whitelist.begin(), dd_settings.whitelist.end(), deauth.addr2().to_string()) != dd_settings.whitelist.end())
             std::cout << "whitelisted device " << deauth.addr2().to_string() << " sent deauth frame" << std::endl;
-        }
     } else {
         auto it = std::find_if(devices.begin(), devices.end(), [&](const device& d) {return d.bssid == deauth.addr2().to_string();});
-        if(it != devices.end()){
-            it.base()->deauthpktcount++;
-        } else {
+        if(it != devices.end()) it.base()->deauthpktcount++;
+        else {
             device d;
             d.bssid = deauth.addr2().to_string();
             d.deauthpktcount++;
